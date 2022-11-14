@@ -1,9 +1,14 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const btnStart = document.querySelector('[data-start]');
 btnStart.setAttribute('disabled', 'true');
-const timerDisplay = document.querySelectorAll('.value');
+const fieldDay = document.querySelector('[data-days]');
+const fieldhours = document.querySelector('[data-hours]');
+const fieldminutes = document.querySelector('[data-minutes]');
+const fieldseconds = document.querySelector('[data-seconds]');
+const calendar = document.querySelector('#datetime-picker');
 
 function convertMs(ms) {
     // Number of milliseconds per unit of time
@@ -24,34 +29,44 @@ function convertMs(ms) {
     return { days, hours, minutes, seconds };
 }
 
+function addLeadingZero(value) {
+    return value.toString().padStart(2, 0);
+}
+
 const options = {
     enableTime: true,
     time_24hr: true,
     defaultDate: new Date(),
     minuteIncrement: 1,
     onClose(selectedDates) {
-        btnStart.removeAttribute('disabled');
+        btnStart.disabled = false;
         const selectedDate = Number(selectedDates[0].getTime());
         function calculateDeltaTime() {
-            const deltaTime = selectedDate - new Date().getTime();
+            const deltaTime = selectedDate - Date.now();
             return deltaTime;
         }
         if (calculateDeltaTime() < 0) {
-            alert("Please choose a date in the future");
+            Notify.failure("Please choose a date in the future");
             return;
         }
 
         btnStart.addEventListener('click', () => {
-            btnStart.setAttribute('disabled', 'true');
-            timerId = setInterval(() => {
+            calendar.disabled = true;
+            btnStart.disabled = true;
+            const intervalId = setInterval(() => {
                 const deltaTime = calculateDeltaTime();
-                const convertedTime = Object.values(convertMs(deltaTime));
-                timerDisplay.forEach((element, index) => {
-                    element.textContent = convertedTime[index];
-                })
+                if (deltaTime <= 0) {
+                    clearInterval(intervalId);
+                    return;
+                }
+                const { days, hours, minutes, seconds } = convertMs(deltaTime);
+                fieldDay.textContent = addLeadingZero(days);
+                fieldhours.textContent = addLeadingZero(hours);
+                fieldminutes.textContent = addLeadingZero(minutes);
+                fieldseconds.textContent = addLeadingZero(seconds);
             }, 1000);
         });
     },
 };
 
-const calendar = flatpickr("#datetime-picker", options);
+flatpickr("#datetime-picker", options);
