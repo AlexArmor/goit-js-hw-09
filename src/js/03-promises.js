@@ -19,6 +19,7 @@ function onSubmitClick(event) {
       });
     delay += step;
   }
+  this.reset();
 }
 
 function createPromise(position, delay) {
