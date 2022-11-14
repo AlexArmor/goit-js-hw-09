@@ -11,6 +11,7 @@ btnStart.addEventListener('click', onStartClick);
 function onStartClick() {
     btnStart.setAttribute("disabled", "true");
     btnStop.removeAttribute("disabled");
+    document.body.style.backgroundColor = getRandomHexColor();
     const timerId = setInterval(() => {
         document.body.style.backgroundColor = getRandomHexColor();
     }, 1000);
