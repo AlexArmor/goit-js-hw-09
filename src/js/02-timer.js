@@ -1,6 +1,10 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
+const btnStart = document.querySelector('[data-start]');
+btnStart.setAttribute('disabled', 'true');
+const timerDisplay = document.querySelectorAll('.value');
+
 function convertMs(ms) {
     // Number of milliseconds per unit of time
     const second = 1000;
@@ -26,8 +30,28 @@ const options = {
     defaultDate: new Date(),
     minuteIncrement: 1,
     onClose(selectedDates) {
-        console.log(selectedDates[0]);
+        btnStart.removeAttribute('disabled');
+        const selectedDate = Number(selectedDates[0].getTime());
+        function calculateDeltaTime() {
+            const deltaTime = selectedDate - new Date().getTime();
+            return deltaTime;
+        }
+        if (calculateDeltaTime() < 0) {
+            alert("Please choose a date in the future");
+            return;
+        }
+
+        btnStart.addEventListener('click', () => {
+            btnStart.setAttribute('disabled', 'true');
+            timerId = setInterval(() => {
+                const deltaTime = calculateDeltaTime();
+                const convertedTime = Object.values(convertMs(deltaTime));
+                timerDisplay.forEach((element, index) => {
+                    element.textContent = convertedTime[index];
+                })
+            }, 1000);
+        });
     },
 };
 
-flatpickr("#datetime-picker", options)
+const calendar = flatpickr("#datetime-picker", options);
