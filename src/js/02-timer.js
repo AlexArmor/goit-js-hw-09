@@ -39,7 +39,6 @@ const options = {
     defaultDate: new Date(),
     minuteIncrement: 1,
     onClose(selectedDates) {
-        btnStart.disabled = false;
         const selectedDate = Number(selectedDates[0].getTime());
         function calculateDeltaTime() {
             const deltaTime = selectedDate - Date.now();
@@ -50,6 +49,7 @@ const options = {
             return;
         }
 
+        btnStart.disabled = false;
         btnStart.addEventListener('click', () => {
             calendar.disabled = true;
             btnStart.disabled = true;
