@@ -10,6 +10,13 @@ const fieldminutes = document.querySelector('[data-minutes]');
 const fieldseconds = document.querySelector('[data-seconds]');
 const calendar = document.querySelector('#datetime-picker');
 
+const ELEMENT_MAPPER = {
+    days: fieldDay,
+    hours: fieldhours,
+    minutes: fieldminutes,
+    seconds: fieldseconds,
+}
+
 function convertMs(ms) {
     // Number of milliseconds per unit of time
     const second = 1000;
@@ -59,11 +66,16 @@ const options = {
                     clearInterval(intervalId);
                     return;
                 }
-                const { days, hours, minutes, seconds } = convertMs(deltaTime);
-                fieldDay.textContent = addLeadingZero(days);
-                fieldhours.textContent = addLeadingZero(hours);
-                fieldminutes.textContent = addLeadingZero(minutes);
-                fieldseconds.textContent = addLeadingZero(seconds);
+                const converted = convertMs(deltaTime);
+
+                for (const key in ELEMENT_MAPPER) {
+                    ELEMENT_MAPPER[key].textContent = addLeadingZero(converted[key])
+                }
+                // fieldDay.textContent = addLeadingZero(days);
+                // fieldhours.textContent = addLeadingZero(hours);
+                // fieldminutes.textContent = addLeadingZero(minutes);
+                // fieldseconds.textContent = addLeadingZero(seconds);
+
             }, 1000);
         });
     },
